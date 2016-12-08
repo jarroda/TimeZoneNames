@@ -17,10 +17,10 @@ namespace TimeZoneNames.DataBuilder
 
             // use the trunk windows mappings and metazones, as they tend to be more accurate and frequently updated
             const string url2 = "http://unicode.org/repos/cldr/trunk/common/supplemental/windowsZones.xml";
-            await DownloadAsync(url2, Path.Combine(dir, @"common\supplemental"));
+            await DownloadAsync(url2, Path.Combine(dir, "common", "supplemental"));
 
             const string url3 = "http://unicode.org/repos/cldr/trunk/common/supplemental/metaZones.xml";
-            await DownloadAsync(url3, Path.Combine(dir, @"common\supplemental"));
+            await DownloadAsync(url3, Path.Combine(dir, "common", "supplemental"));
         }
 
         public static async Task DownloadTzdbAsync(string dir)
@@ -46,6 +46,7 @@ namespace TimeZoneNames.DataBuilder
 
         private static async Task DownloadAsync(string url, string dir)
         {
+            Console.WriteLine("Downloading " + url);
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
 
@@ -59,6 +60,7 @@ namespace TimeZoneNames.DataBuilder
 
         private static async Task DownloadAndExtractAsync(string url, string dir)
         {
+            Console.WriteLine("Downloading " + url);
             using (var httpStream = await HttpClientInstance.GetStreamAsync(url))
             using (var reader = ReaderFactory.Open(httpStream))
             {
@@ -71,7 +73,7 @@ namespace TimeZoneNames.DataBuilder
                     if (entry.IsDirectory)
                         continue;
 
-                    var targetPath = Path.Combine(dir, entry.Key.Replace('/', '\\'));
+                    var targetPath = Path.Combine(dir, entry.Key.Replace('/', Path.DirectorySeparatorChar));
                     var targetDir = Path.GetDirectoryName(targetPath);
                     if (targetDir == null)
                         throw new InvalidOperationException();

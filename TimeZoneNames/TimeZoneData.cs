@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using ProtoBuf;
 
 namespace TimeZoneNames
@@ -33,7 +34,11 @@ namespace TimeZoneNames
 
         public static TimeZoneData Load()
         {
+#if NET40
             var assembly = typeof(TimeZoneData).Assembly;
+#else
+            var assembly = typeof(TimeZoneData).GetTypeInfo().Assembly;
+#endif
             using (var stream = assembly.GetManifestResourceStream("TimeZoneNames.tz.dat"))
             {
                 return Serializer.Deserialize<TimeZoneData>(stream);

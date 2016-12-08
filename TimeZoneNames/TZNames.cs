@@ -161,9 +161,15 @@ namespace TimeZoneNames
                 IComparer<string> comparer;
                 if (Comparers.TryGetValue(langKey, out comparer))
                     return comparer;
-
+               
+#if NET40
                 var culture = new CultureInfo(langKey.Replace('_', '-'));
                 comparer = StringComparer.Create(culture, false);
+#else
+                comparer = new CultureInfo(langKey.Replace('_', '-'))
+                    .CompareInfo.GetStringComparer(CompareOptions.IgnoreCase);
+#endif
+                
                 Comparers.Add(langKey, comparer);
                 return comparer;
             }
